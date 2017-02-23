@@ -1,0 +1,3 @@
+ sed –i “s/alarm/isnan/g” yourbin
+
+或者 改变alarm的时间
