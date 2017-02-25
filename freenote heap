@@ -61,3 +61,10 @@ p main_arena.bins[0]
 p &main_arena.bins[0]
 
 通过泄露unsort_bin 地址，我们来计算libc函数基址以及system 函数地址
+leaking a heap address is fairly simple though:
+
+Allocate 4 chunks.
+Free chunk 3 and chunk 1 (in that order, so that malloc writes the two pointers into chunk 1).
+Allocate another chunk of size 1 (or 8). This chunk will be placed where chunk 1 used to be and where its FD and BK pointers still are, with the BK pointer pointing to chunk 3.
+Print the notes, since this is a %s print, we can leak the FD (or BK if chosen size in step 3 was 8) pointer of chunk 1 which in our case points to chunk 3 (heap memory)!
+This same technique can be used to leak a libc address (the head of the freelist is in the .bss of the libc). Simply follow the same steps, but now it suffices to allocate chunks 1 and 2 and free the first.
