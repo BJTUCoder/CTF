@@ -164,6 +164,15 @@ trunk0, "aaaaaaaa"就会覆盖trunk0的fd，list_note()就会泄露trunk0的bk�
  执行unlink后, X -> X - 0x18 （X的值变成X - 0x18） X指向的地址做任意写操作,就能通过再次覆盖修改X的值,继而使X指向我们想修改的任意空间,
 从而实现对任意地址的任意修改.
 
+
+前向合并:
+如果检查当前块P的pre_inuse位为0,就把前一块P0从freelist中取出来,这个过程会对P0执行unlink操作.
+
+后向合并(后一块P1非TOPchunk):
+通过 块P地址+size 获取块P的后一块P1,再通过P1的后一块P2的pre_inuse位来判断块P1的状态,如果是0,代表P1是free的,对P执行unlink操作
+最后,把前面free出来的合并块(A+B)放到unsorted chunk里,如果P1是TOPchunk,就直接合并到TOPchunk.
+
+
 通过泄露的libc地址我们可以计算出 system() 函数和 "/bin/sh" 字符串在内存中的地址，通过泄露的堆的地址我们能得到note table的地址。
 然后我们构造一个假的note，利用使用double free的漏洞触发unlink，将note0的位置指向note table的地址。随后我们就可以通过编辑note0
 来编辑note table了。通过编辑note table我们把note0指向 free() 函数在got表中的地址，把note1指向 "/bin/sh" 在内存中的地址。
