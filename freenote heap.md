@@ -205,8 +205,7 @@ realloc的行为方式，结合源码总结为：
 通过泄露的libc地址我们可以计算出 system() 函数和 "/bin/sh" 字符串在内存中的地址，通过泄露的堆的地址我们能得到note table的地址。然后我们构造一个假的note，利用使用double free的漏洞触发unlink，将note0的位置指向note table的地址。随后我们就可以通过编辑note0来编辑note table了。通过编辑note table我们把note0指向 free() 函数在got表中的地址，把note1指向 "/bin/sh" 在内存中的地址。然后我们编辑note0把 free() 函数在got表中的地址改为 system() 的地址。最后我们执行delete note1操作。因为我们把note1的地址指向了 "/bin/sh" ，所以正常情况下程序会执行 free("/bin/sh") ，但别忘了我们修改了got表中free的地址，所以程序会执行 system("/bin/sh")。
 
 #####参考链接
-
-  * https://kitctf.de/writeups/0ctf2015/freenote
-  * http://rk700.github.io/2015/04/21/0ctf-freenote/
-  * http://www.tuicool.com/articles/IfYZri3
-  * http://winesap.logdown.com/posts/258859-0ctf-2015-freenode-write-up
+    * https://kitctf.de/writeups/0ctf2015/freenote 
+    * http://rk700.github.io/2015/04/21/0ctf-freenote/
+    * http://www.tuicool.com/articles/IfYZri3
+    * http://winesap.logdown.com/posts/258859-0ctf-2015-freenode-write-up
