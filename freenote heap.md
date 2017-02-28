@@ -190,7 +190,7 @@ if __name__ == '__main__':
 ###### realloc 关键
 在执行该语句：edit_note(0, payload2)， 程序会调用realloc函数（void * realloc ( void * ptr, size_t new_size );），因为传入的地址为X - 0x18, 根据realloc行为，我们希望修改X-0x18地址处的数据，那么必须使realloc函数执行后，返回的ptr指针不变，此时令realloc前后的长度保持一致，即newsize = oldsize。因此在该题中会覆盖X-0x18的内容。
 realloc的行为方式，结合源码总结为：
-***
+
 1. realloc失败的时候，返回NULL；
 2. realloc失败的时候，原来的内存不改变，也就是不free或不move，(这个地方很容易出错)；
 3. 假如原来的内存后面还有足够多剩余内存的话，realloc的内存=原来的内存+剩余内存,realloc还是返回原来内存的地址; 
@@ -206,7 +206,7 @@ realloc的行为方式，结合源码总结为：
 
 #####参考链接
 
-  * https://kitctf.de/writeups/0ctf2015/freenote
-  * http://rk700.github.io/2015/04/21/0ctf-freenote/
-  * http://www.tuicool.com/articles/IfYZri3
-  * http://winesap.logdown.com/posts/258859-0ctf-2015-freenode-write-up
+  * https://kitctf.de/writeups/0ctf2015/freenote
+  * http://rk700.github.io/2015/04/21/0ctf-freenote/
+  * http://www.tuicool.com/articles/IfYZri3
+  * http://winesap.logdown.com/posts/258859-0ctf-2015-freenode-write-up
