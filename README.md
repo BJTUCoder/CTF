@@ -14,7 +14,7 @@
 * [pwnable.kr](http://pwnable.kr/)
 * [KITCTF](https://kitctf.de/)
 * [ctf_记事本](http://rk700.github.io/)
-
+* [二进制漏洞学习](http://security.cs.rpi.edu/courses/binexp-spring2015/)
 
 ##CTF技巧总结
 * [ctf百度脑图](http://naotu.baidu.com/file/3e4a946f06612511e829b126ef7f7242)
@@ -58,7 +58,7 @@
 * [CCTF pwn3格式化字符串漏洞详细writeup](http://bobao.360.cn/ctf/learning/160.html)
 * [CCTF pwn3 writeup](https://github.com/CTF-Thanos/ctf-writeups/blob/master/2016/CCTF/pwn/pwn3/README.md)
 * [Linux高级漏洞攻击](http://www.jianshu.com/p/f2acfeb66b6c)
-
+* [format string PDF](https://crypto.stanford.edu/cs155old/cs155-spring08/papers/formatstring-1.2.pdf)
 ##android
 * [android逆向分析](http://www.wjdiankong.cn/)
 
