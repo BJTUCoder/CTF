@@ -1,6 +1,7 @@
 # CTF
 ## record my ctf experience
 * [ctf学习网站](http://blog.csdn.net/ida0918/article/details/52730662)
+* []()
 
 ## CTF大神博客
 * [CTFs](https://github.com/ctfs)
@@ -27,6 +28,7 @@
 * [流量中提取文件的五种方法](http://www.wtoutiao.com/p/5d4Nad.html)
 * [Head First FILE Stream Pointer Overflow](http://www.tuicool.com/articles/niEB7zq)
 * [借助DynELF实现无libc的漏洞利用小结](http://www.tuicool.com/articles/Nviuq2N)
+
 
 
 # CTF工具
@@ -62,6 +64,15 @@
 * [Linux高级漏洞攻击](http://www.jianshu.com/p/f2acfeb66b6c)
 * [format string PDF](https://crypto.stanford.edu/cs155old/cs155-spring08/papers/formatstring-1.2.pdf)
 * [Linux系统下格式化字符串利用研究](http://www.tuicool.com/articles/EZnMvq)
+* [How to overlay glibc](http://blog.dragonsector.pl/2017/03/0ctf-2017-easiestprintf-pwn-150.html)
+* [Exploiting Sudo format string vunerability](http://www.vnsecurity.net/research/2012/02/16/exploiting-sudo-format-string-vunerability.html)
+
+## ELF 
+* [ELF paper](https://www.usenix.org/system/files/conference/usenixsecurity15/sec15-paper-di-frederico.pdf)
+
+## Glibc
+* [Glibc_Adventures-The_Forgotten_Chunks](https://www.contextis.com/documents/120/Glibc_Adventures-The_Forgotten_Chunks.pdf)
+* [Have fun with glibc](http://o0xmuhe.me/2016/11/21/Have-fun-with-glibc%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/)
 
 ## android
 * [android逆向分析](http://www.wjdiankong.cn/)
