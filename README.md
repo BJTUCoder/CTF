@@ -26,6 +26,7 @@
 * [rsa加解密](http://www.bystudent.com/?cat=8)
 * [流量中提取文件的五种方法](http://www.wtoutiao.com/p/5d4Nad.html)
 * [Head First FILE Stream Pointer Overflow](http://www.tuicool.com/articles/niEB7zq)
+* [借助DynELF实现无libc的漏洞利用小结](http://www.tuicool.com/articles/Nviuq2N)
 
 
 # CTF工具
@@ -60,6 +61,8 @@
 * [CCTF pwn3 writeup](https://github.com/CTF-Thanos/ctf-writeups/blob/master/2016/CCTF/pwn/pwn3/README.md)
 * [Linux高级漏洞攻击](http://www.jianshu.com/p/f2acfeb66b6c)
 * [format string PDF](https://crypto.stanford.edu/cs155old/cs155-spring08/papers/formatstring-1.2.pdf)
+* [Linux系统下格式化字符串利用研究](http://www.tuicool.com/articles/EZnMvq)
+
 ## android
 * [android逆向分析](http://www.wjdiankong.cn/)
 
