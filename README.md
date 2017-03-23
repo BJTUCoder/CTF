@@ -1,7 +1,6 @@
 # CTF
 ## record my ctf experience
 * [ctf学习网站](http://blog.csdn.net/ida0918/article/details/52730662)
-* []()
 
 ## CTF大神博客
 * [CTFs](https://github.com/ctfs)
@@ -29,10 +28,16 @@
 * [Head First FILE Stream Pointer Overflow](http://www.tuicool.com/articles/niEB7zq)
 * [借助DynELF实现无libc的漏洞利用小结](http://www.tuicool.com/articles/Nviuq2N)
 
-
-
 # CTF工具
 * [1897军火库](https://tools.40huo.cn/#!index.md)
+* [Vim](https://github.com/ma6174/vim)
+* [peda](https://github.com/longld/peda)
+* [pwntools](https://github.com/Gallopsled/pwntools)
+* [zio](https://github.com/zTrix/zio)
+* [ROPGadget](https://github.com/JonathanSalwan/ROPgadget)
+* [roputils](https://github.com/inaz2/roputils)
+* [IDA pro ...](http://down.52pojie.cn/Tools/)
+
 
 # 原理学习
 ## Linux底层原理
@@ -56,6 +61,7 @@
 * [Linux堆溢出利用:unlink](http://www.tuicool.com/articles/nyEvU3Q)
 * [浅析Linux堆溢出之fastbin](http://www.tuicool.com/articles/6vqIBf6)
 * [heap overflow&溢出保护和绕过](http://www.tuicool.com/articles/aY7Fzav)
+* [How2Heap](https://github.com/shellphish/how2heap)
 
 ## Format String
 * [漏洞挖掘基础之格式化字符串](http://bobao.360.cn/learning/detail/695.html)
