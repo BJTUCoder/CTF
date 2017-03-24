@@ -44,11 +44,11 @@
 * [内存映射mmap](http://www.tuicool.com/articles/A7n2ueq)
 
 
-## 栈溢出
-* [一步一步学ROP之Android ARM 32位篇](http://www.tuicool.com/articles/zUR7nav)
-* [一步一步学ROP之gadgets和2free篇](http://www.tuicool.com/articles/IfYZri3)
-* [一步一步学ROP之linux_x64篇](http://www.tuicool.com/articles/ZzI7FrI)
+## 栈溢出  (CTF初学者建议从此处开始学习)
 * [一步一步学ROP之linux_x86篇](http://www.tuicool.com/articles/ZruA7bZ)
+* [一步一步学ROP之linux_x64篇](http://www.tuicool.com/articles/ZzI7FrI)
+* [一步一步学ROP之gadgets和2free篇](http://www.tuicool.com/articles/IfYZri3)
+* [一步一步学ROP之Android ARM 32位篇](http://www.tuicool.com/articles/zUR7nav)
 * [return2libc学习笔记](http://www.tuicool.com/articles/VVBz6va)
 
 ## 堆利用
