@@ -60,6 +60,7 @@
 * [Linux堆溢出漏洞利用之unlink](http://www.tuicool.com/articles/iium6fn)
 * [Linux堆溢出利用:unlink](http://www.tuicool.com/articles/nyEvU3Q)
 * [浅析Linux堆溢出之fastbin](http://www.tuicool.com/articles/6vqIBf6)
+* [Malloc碎碎念](http://www.cnblogs.com/wangaohui/p/5190889.html)
 * [heap overflow&溢出保护和绕过](http://www.tuicool.com/articles/aY7Fzav)
 * [How2Heap](https://github.com/shellphish/how2heap)
 
