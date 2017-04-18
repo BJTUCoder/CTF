@@ -17,7 +17,6 @@
 
 ## ping.h 
     #include <stdio.h>
-
     int Java_com_geekerchina_pingpongmachine_MainActivity_ping(int a1, int a2, int a3, signed int a4);
     int Java_com_geekerchina_pingpongmachine_MainActivity_pong(int a1, int a2, int a3, int a4);
     
@@ -32,6 +31,6 @@
 将so放置到该目录下，然后ndk编译
 
 ## 运行
-将libpp.so 和 生成的 ping  拷贝到手机中， 添加手机环境变量以便手机可以找到so文件。 
+将libpp.so 和 生成的 ping  拷贝到手机中， 添加手机so环境变量以便手机可以找到so文件。 
 
 ## OVER
