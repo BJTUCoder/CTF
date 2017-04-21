@@ -86,4 +86,8 @@
 * [android逆向分析](http://www.wjdiankong.cn/)
 * [Android代码混淆技术总结(一)](http://bobao.360.cn/learning/detail/3704.html)
 
+## 反混淆
+* [利用符号执行去除控制流平坦化](https://security.tencent.com/index.php/blog/msg/112)
+* [反混淆：恢复被OLLVM保护的程序](http://www.0daybank.org/?p=7845)
+
 > 待续...
