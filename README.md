@@ -63,6 +63,7 @@
 * [Malloc碎碎念](http://www.cnblogs.com/wangaohui/p/5190889.html)
 * [heap overflow&溢出保护和绕过](http://www.tuicool.com/articles/aY7Fzav)
 * [How2Heap](https://github.com/shellphish/how2heap)
+* [Null byte offset](http://www.open-open.com/lib/view/open1451441544933.html)
 
 ## Format String
 * [漏洞挖掘基础之格式化字符串](http://bobao.360.cn/learning/detail/695.html)
@@ -83,5 +84,6 @@
 
 ## android
 * [android逆向分析](http://www.wjdiankong.cn/)
+* [Android代码混淆技术总结(一)](http://bobao.360.cn/learning/detail/3704.html)
 
 > 待续...
