@@ -2,6 +2,9 @@
 ## record my ctf experience
 * [ctf学习网站](http://blog.csdn.net/ida0918/article/details/52730662)
 
+## 科学上网
+* [search in google](https://laod.cn/hosts/)
+
 ## CTF大神博客
 * [CTFs](https://github.com/ctfs)
 * [bamboofox](https://bamboofox.github.io/)
