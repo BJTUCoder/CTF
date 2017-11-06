@@ -45,6 +45,8 @@
 * [zio](https://github.com/zTrix/zio)
 * [ROPGadget](https://github.com/JonathanSalwan/ROPgadget)
 * [roputils](https://github.com/inaz2/roputils)
+* [符号执行-angr](https://github.com/angr/angr)
+* [动态插桩-pin](https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool)
 * [IDA pro ...](http://down.52pojie.cn/Tools/)
 
 
