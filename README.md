@@ -102,4 +102,16 @@
 * [利用符号执行去除控制流平坦化](https://security.tencent.com/index.php/blog/msg/112)
 * [反混淆：恢复被OLLVM保护的程序](http://www.0daybank.org/?p=7845)
 
+## linux kernel pwn 
+### 入门
+* [Linux 内核漏洞利用教程（一）：环境配置](https://www.tuicool.com/articles/mYvUFfe)
+* [Linux 内核漏洞利用教程（二）：两个Demo](https://www.tuicool.com/articles/eiEria)
+* [Linux 内核漏洞利用教程（三）：实践 CSAW CTF 题目](https://www.tuicool.com/articles/iqqUNbI)
+
+### 实践
+* [一道简单内核题入门内核利用](https://www.anquanke.com/post/id/86490)
+* [Linux Kernel UAF](http://pwn4.fun/2017/08/15/Linux-Kernel-UAF/)
+* [Exploiting Linux Kernel Heap Corruptions](http://pwn4.fun/2017/06/12/Exploiting-Linux-Kernel-Heap-Corruptions/)
+
+
 > 待续...
